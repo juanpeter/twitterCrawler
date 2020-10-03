@@ -57,7 +57,6 @@ for userID in userList:
   oldest_id = tweets[-1].id
   tweet_term_list = []
 
-  print(len(tweet_term_list))
   # A tweet_term_list não está esvaziando
   while True:
       tweets = api.user_timeline(
@@ -80,23 +79,22 @@ for userID in userList:
   for tweet in all_tweets:
     i = 0
     while i < len(text_query):
-      # Se o tweet tiver os termos, adicionar
+      # Se o tweet tiver os termos
       if tweet.full_text.find(text_query[i]) != -1:
-        tweet_term_list.append(tweet)
+          # Filtra tweets duplicados
+          # Se a lista for menor que 0, adicionar
+          if len(tweet_term_list) == 0:
+            tweet_term_list.append(tweet)
+          # Se for maior, adicione se o id for diferente do id anterior
+          # Evita tweets duplicados
+          elif tweet.id_str != tweet_term_list[len(tweet_term_list) -1].id_str:
+            tweet_term_list.append(tweet)
+          # Se o tweet for duplicado, não adicione
+          else:
+            print("Tweet duplicado")
       i += 1
 
   print(f'Numero de tweets com o termos {text_query}: {len(tweet_term_list)}')
-
-  # Filtra tweets duplicados
-  # Sempre corta exatamente a metade dos tweets, algo parece errado
-  for tweet in tweet_term_list:
-    i = 0
-    while i < len(tweet_term_list):
-      # retornar a posição, se a posição existir, deve ser retirado
-      if tweet.id_str.find(tweet_term_list[i].id_str) != -1:
-        tweet_term_list.remove(tweet_term_list[i])
-      i += 1
-
   print(f'Numero de tweets não duplicados: {len(tweet_term_list)}')
 
   outtweets = [
